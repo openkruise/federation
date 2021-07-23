@@ -1,0 +1,17 @@
+domain: kruise.io
+layout:
+- go.kubebuilder.io/v3
+multigroup: true
+projectName: federation
+repo: github.com/openkruise/federation
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: kruise.io
+  group: federation
+  kind: FederatedCloneSet
+  path: github.com/openkruise/federation/apis/federation/v1alpha1
+  version: v1alpha1
+version: "3"

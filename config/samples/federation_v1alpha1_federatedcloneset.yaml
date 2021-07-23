@@ -1,0 +1,7 @@
+apiVersion: federation.kruise.io/v1alpha1
+kind: FederatedCloneSet
+metadata:
+  name: federatedcloneset-sample
+spec:
+  # Add fields here
+  foo: bar
