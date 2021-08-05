@@ -18,6 +18,7 @@ package federation
 
 import (
 	"context"
+	
 	appsv1alpha1 "github.com/openkruise/kruise-api/apps/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -85,10 +86,3 @@ func (r *FederatedCloneSetReconciler) SetupWithManager(opts *options.Options, mg
 		For(&federationv1alpha1.FederatedCloneSet{}).
 		Complete(r)
 }
-
-
-
-
-
-
-
