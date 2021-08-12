@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	csv1 "github.com/openkruise/kruise-api/apps/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -28,8 +29,51 @@ type FederatedCloneSetSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of FederatedCloneSet. Edit federatedcloneset_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Total number of pods desired across federated clusters.
+	// Replicas specified in the spec for target deployment template or replicaset
+	// template will be discarded/overridden when scheduling preferences are
+	// specified.
+	TotalReplicas int32 `json:"totalReplicas"`
+
+	// If set to true then already scheduled and running replicas may be moved to other clusters
+	// in order to match current state to the specified preferences. Otherwise, if set to false,
+	// up and running replicas will not be moved.
+	// +optional
+	Rebalance bool `json:"rebalance,omitempty"`
+
+	// If set to true, the placement of target kind will be determined using the instersection
+	// of RSP placement scheduling result and the clusterSelector (spec.placement.clusterSelector)
+	// specified on the target kind.
+	// If set to false or not defined, RSP placement scheduling result overwrites the clusters
+	// list in the spec.placement.clusters of the target resource.
+	// +optional
+	IntersectWithClusterSelector bool `json:"intersectWithClusterSelector"`
+
+	// A mapping between cluster names and preferences regarding a local workload object (dep, rs, .. ) in
+	// these clusters.
+	// "*" (if provided) applies to all clusters if an explicit mapping is not provided.
+	// If omitted, clusters without explicit preferences should not have any replicas scheduled.
+	// +optional
+	Clusters map[string]ClusterPreferences `json:"clusters,omitempty"`
+
+	// To tell CloneSet in the clusters what to do
+	// +optional
+	CloneSetSpec csv1.CloneSetSpec `json:"cloneSetSpec"`
+}
+
+type ClusterPreferences struct {
+	// Minimum number of replicas that should be assigned to this cluster workload object. 0 by default.
+	// +optional
+	MinReplicas int64 `json:"minReplicas,omitempty"`
+
+	// Maximum number of replicas that should be assigned to this cluster workload object.
+	// Unbounded if no value provided (default).
+	// +optional
+	MaxReplicas *int64 `json:"maxReplicas,omitempty"`
+
+	// A number expressing the preference to put an additional replica to this cluster workload object.
+	// 0 by default.
+	Weight int64 `json:"weight,omitempty"`
 }
 
 // FederatedCloneSetStatus defines the observed state of FederatedCloneSet
